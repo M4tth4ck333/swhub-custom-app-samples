@@ -48,9 +48,14 @@ spec:
       sub_filter "location.href='/" "location.href='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
       sub_filter 'hx-get="/' 'hx-get="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
       sub_filter 'hx-post="/' 'hx-post="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      # handle different forms of root path
       sub_filter '{window.ROOT_PATH}/' '{window.ROOT_PATH}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter '{rootPath}/' '{rootPath}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
+      sub_filter 'rootPath}/' 'rootPath}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
       sub_filter "window.ROOT_PATH + " "window.ROOT_PATH + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/' + ";
-      sub_filter '(window.ROOT_PATH || "") + ' '(window.ROOT_PATH || "") + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/" + ';
+      sub_filter "root_path + '/admin" "root_path + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin";
+      sub_filter 'root_path + "/admin' 'root_path + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
+      sub_filter '"/admin/teams/"' '"/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin/teams"';
+      sub_filter '""}/admin' '""}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
+      sub_filter ", '/admin" ", '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin";
+      sub_filter '"") + "/admin' '"") + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
+      sub_filter '{getRootPath()}/' '{getRootPath()}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
     }
