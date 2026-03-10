@@ -50,7 +50,7 @@ spec:
       sub_filter 'hx-post="/' 'hx-post="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
       sub_filter '{window.ROOT_PATH}/' '{window.ROOT_PATH}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
       sub_filter 'rootPath}/' 'rootPath}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "window.ROOT_PATH + " "window.ROOT_PATH + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/' + ";
+      sub_filter "window.ROOT_PATH + " "window.ROOT_PATH + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}' + ";
       sub_filter "root_path + '/admin" "root_path + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin";
       sub_filter 'root_path + "/admin' 'root_path + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
       sub_filter '"/admin/teams/"' '"/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin/teams"';

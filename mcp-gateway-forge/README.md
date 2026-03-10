@@ -15,7 +15,12 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
 
   ```
   $ cat cpd-cli-workspace/olm-utils-workspace/work/app-env-json.json
-    {"HOST":"0.0.0.0","JWT_SECRET_KEY":"my-test-key","BASIC_AUTH_USER":"admin@example.com","BASIC_AUTH_PASSWORD":"changeme","AUTH_REQUIRED":"true","DATABASE_URL":"sqlite:////data/mcp.db","SSL":"true","CERT_FILE":"/etc/certs/tls.crt","KEY_FILE":"/etc/certs/tls.key","MCPGATEWAY_UI_ENABLED":"true","MCPGATEWAY_ADMIN_API_ENABLED":"true"}
+
+    {"HOST": "0.0.0.0", "JWT_SECRET_KEY": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}, "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "sqlite:////data/mcp.db", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
+
+    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:
+      "SSL_CERT_FILE": "/etc/ca-certs/ca.crt"
+    this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server
   ```
 
 - run cpd-cli create-dockerfile-application:  
@@ -25,7 +30,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
     --app_port=4444 \
     --app_port_tls=true \
     --repo_url=https://github.com/IBM/mcp-context-forge.git \
-    --repo_branch=main  \
+    --repo_branch=v1.0.0-RC2  \
     --dockerfile=Containerfile  \
     --app_envs_json=/tmp/work/app-envs-json-sqlite.json \
     --pvc_info={"size":"2Gi","mount_path":"/data"}  \
@@ -81,8 +86,12 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
     ```
     $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-postgresql.json  
 
-    {"HOST":"0.0.0.0","JWT_SECRET_KEY":"my-test-key","BASIC_AUTH_USER":"admin@example.com","BASIC_AUTH_PASSWORD":"changeme","AUTH_REQUIRED":"true","DATABASE_URL":"postgresql://postgres:secret@postgresql-mcp-context-forge:5432/mcp","SSL":"true","CERT_FILE":"/etc/certs/tls.crt","KEY_FILE":"/etc/certs/tls.key","MCPGATEWAY_UI_ENABLED":"true","MCPGATEWAY_ADMIN_API_ENABLED":"true"}
+      {"HOST": "0.0.0.0", "JWT_SECRET_KEY": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}, "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
     ```  
+    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:
+      "SSL_CERT_FILE": "/etc/ca-certs/ca.crt"
+    this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server
+
   - run cpd-cli create-dockerfile-application command:  
     ```
     cpd-cli manage create-dockerfile-application --instance_ns=zen \
@@ -90,7 +99,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
       --app_port=4444 \
       --app_port_tls=true \
       --repo_url=https://github.com/IBM/mcp-context-forge.git \
-      --repo_branch=main  \
+      --repo_branch=v1.0.0-RC2  \
       --dockerfile=Containerfile  \
       --app_envs_json=/tmp/work/app-envs-json-postgresql.json \
       --cpu=400m  \
