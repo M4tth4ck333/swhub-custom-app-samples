@@ -14,14 +14,18 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
 - create app-envs-json-sqlite.json:  
 
   ```
-  $ cat cpd-cli-workspace/olm-utils-workspace/work/app-env-json.json
+  $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-sqlite.json
 
-    {"HOST": "0.0.0.0", "JWT_SECRET_KEY": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}, "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "sqlite:////data/mcp.db", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
+    # cpd 5.3.0  
+    {"HOST": "0.0.0.0", "JWT_SECRET_KEY": "zen-phy-loc-broker-secret-token", "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "sqlite:////data/mcp.db", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
 
-    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:
-      "SSL_CERT_FILE": "/etc/ca-certs/ca.crt"
-    this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server
+    # cpd 5.4.0  
+    [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"DATABASE_URL","value":"sqlite:////data/mcp.db"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}]
   ```
+  ***Note:***
+    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
+    `{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+    this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server in mcpgateway admin console
 
 - run cpd-cli create-dockerfile-application:  
   ```
@@ -35,10 +39,12 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
     --app_envs_json=/tmp/work/app-envs-json-sqlite.json \
     --pvc_info={"size":"2Gi","mount_path":"/data"}  \
     --cpu=400m  \
-    --memory=200Mi  \
-    --cpu_limit=500m  \
-    --memory_limit=400Mi
-  ```
+    --memory=400Mi  \
+    --cpu_limit=800m  \
+    --memory_limit=2Gi
+  ```  
+  ***Note:***
+    --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2
 
 - check that the pod is in running status:
   ```
@@ -51,7 +57,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
   --instance_ns=zen \
   --app_name= mcp-context-forge-sqlite \
   --app_run_id=<from create-dockerfile-application> \
-  --app_proxy_config_yaml=mcp-gateway-forge.conf.yaml
+  --app_proxy_config_yaml=/tmp/work/mcp-gateway-forge.conf.yaml
   ```
 
 ### deploy mcp-context-forge with postgres database:  
@@ -86,11 +92,16 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
     ```
     $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-postgresql.json  
 
-      {"HOST": "0.0.0.0", "JWT_SECRET_KEY": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}, "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
+    # cpd 5.3.0  
+    {"HOST":"0.0.0.0","JWT_SECRET_KEY":"zen-phy-loc-broker-secret-token","BASIC_AUTH_USER":"admin@example.com","BASIC_AUTH_PASSWORD":"changeme","AUTH_REQUIRED":"true","DATABASE_URL":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp","SSL":"true","CERT_FILE":"/etc/certs/tls.crt","KEY_FILE":"/etc/certs/tls.key","MCPGATEWAY_UI_ENABLED":"true","MCPGATEWAY_ADMIN_API_ENABLED":"true"}
+
+    # cpd 5.4.0  
+      [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"DATABASE_URL","value":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}]
     ```  
-    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:
-      "SSL_CERT_FILE": "/etc/ca-certs/ca.crt"
-    this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server
+    ***Note:***
+      when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
+        `{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+      this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server in mcpgateway admin console
 
   - run cpd-cli create-dockerfile-application command:  
     ```
@@ -103,10 +114,13 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
       --dockerfile=Containerfile  \
       --app_envs_json=/tmp/work/app-envs-json-postgresql.json \
       --cpu=400m  \
-      --memory=200Mi  \
-      --cpu_limit=500m  \
-      --memory_limit=400Mi
-    ```
+      --memory=400Mi  \
+      --cpu_limit=800m  \
+      --memory_limit=2Gi
+    ```  
+    ***Note:***
+      --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2
+
   - check that the pod is in running status:
     ```
     mcp-context-forge-postgresql-78bib026k314-57bcbb95b-dshrl            1/1     Running
@@ -117,7 +131,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
       --instance_ns=zen \
       --app_name= mcp-context-forge-postgresql \
       --app_run_id=<from create-dockerfile-application> \
-      --app_proxy_config_yaml=mcp-gateway-forge.conf.yaml
+      --app_proxy_config_yaml=/tmp/work/mcp-gateway-forge.conf.yaml
     ```
 
  #### application available at `https://zen-route/physical_location/default-pl/<app_name-app_run_id>/admin`
