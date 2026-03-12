@@ -29,6 +29,7 @@ spec:
       proxy_buffering off;
       proxy_pass {{ .serviceUrlScheme }}://{{ .upstreamName }}/$1$is_args$args;
       proxy_pass_header X-Accel-Buffering;
+      proxy_cookie_path /admin /physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin      
       ##preserve original host on app redirect
       proxy_redirect ~^(https?://[^/]+)?/admin([#/]?.*)$ $scheme://$http_x_original_host/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin$2;
       proxy_set_header Accept-Encoding "";
