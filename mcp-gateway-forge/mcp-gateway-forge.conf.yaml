@@ -27,36 +27,9 @@ spec:
       proxy_set_header Connection "";
       proxy_ssl_server_name on;
       proxy_buffering off;
-      proxy_pass {{ .serviceUrlScheme }}://{{ .upstreamName }}/$1$is_args$args;
+      proxy_pass {{ .serviceUrlScheme }}://{{ .upstreamName }}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/$1$is_args$args;
       proxy_pass_header X-Accel-Buffering;
-      proxy_cookie_path /admin /physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin      
       ##preserve original host on app redirect
-      proxy_redirect ~^(https?://[^/]+)?/admin([#/]?.*)$ $scheme://$http_x_original_host/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin$2;
+      proxy_redirect ~^(https?://[^/]+)?/physical_location/(.*) $scheme://$http_x_original_host/physical_location/$2;
       proxy_set_header Accept-Encoding "";
-      sub_filter_once off;
-      sub_filter_types *;
-      sub_filter 'href="/' 'href="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "href='/" "href='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'src="/' 'src="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "src='/" "src='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'action="/' 'action="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "action='/" "action='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'url("/' 'url("/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "url('/" "url('/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'window.location="/' 'window.location="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "window.location='/" "window.location='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'location.href="/' 'location.href="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "location.href='/" "location.href='/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/";
-      sub_filter 'hx-get="/' 'hx-get="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter 'hx-post="/' 'hx-post="/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter '{window.ROOT_PATH}/' '{window.ROOT_PATH}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter 'rootPath}/' 'rootPath}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
-      sub_filter "window.ROOT_PATH + " "window.ROOT_PATH + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}' + ";
-      sub_filter "root_path + '/admin" "root_path + '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin";
-      sub_filter 'root_path + "/admin' 'root_path + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
-      sub_filter '"/admin/teams/"' '"/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin/teams"';
-      sub_filter '""}/admin' '""}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
-      sub_filter ", '/admin" ", '/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin";
-      sub_filter '"") + "/admin' '"") + "/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/admin';
-      sub_filter '{getRootPath()}/' '{getRootPath()}/physical_location/{{ .zenPhysicalLocationName }}/{{ .serviceName }}/';
     }
