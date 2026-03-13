@@ -12,20 +12,25 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
   ```
 
 - create app-envs-json-sqlite.json:  
-
   ```
-  $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-sqlite.json
-
-    # cpd 5.3.0  
-    {"HOST": "0.0.0.0", "JWT_SECRET_KEY": "zen-phy-loc-broker-secret-token", "BASIC_AUTH_USER": "admin@example.com", "BASIC_AUTH_PASSWORD": "changeme", "AUTH_REQUIRED": "true", "DATABASE_URL": "sqlite:////data/mcp.db", "SSL": "true", "CERT_FILE": "/etc/certs/tls.crt", "KEY_FILE": "/etc/certs/tls.key", "MCPGATEWAY_UI_ENABLED": "true", "MCPGATEWAY_ADMIN_API_ENABLED": "true"}
-
-    # cpd 5.4.0  
-    [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"DATABASE_URL","value":"sqlite:////data/mcp.db"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}]
+  $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-sqlite.json 
+    [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"REQUIRE_JTI","value":"false"},{"name":"DATABASE_URL","value":"sqlite:////data/mcp.db"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"},{"name":"LOCATION_NAME","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdsupport/physicalLocationName']"}}},{"name":"COMPONENT","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['component']"}}},{"name":"APP_RUN_ID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdata_run_id']"}}}]
   ```
   ***Note:***
     when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
-    `{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+    &emsp;`{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+    and mount the referenced volume path by adding `--volumes_mounts_json=/tmp/work/volumes-mounts.json`, where:
+    ```
+    $ cat /tmp/work/volumes-mounts.json
+      {"volumes":[{"volume_name":"ca-certs","volume_type":"Secret","volume_source":"ca-certs","mount_path":"/etc/ca-certs"}]}  
+    ```  
     this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server in mcpgateway admin console
+
+- create command-json.json file  
+  ```
+  $ cat cpd-cli-workspace/olm-utils-workspace/work/command-json.json  
+    ["sh", "-c", "export APP_ROOT_PATH=/physical_location/$(LOCATION_NAME)/$(COMPONENT)-$(APP_RUN_ID);./docker-entrypoint.sh"]
+  ```  
 
 - run cpd-cli create-dockerfile-application:  
   ```
@@ -36,6 +41,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
     --repo_url=https://github.com/IBM/mcp-context-forge.git \
     --repo_branch=v1.0.0-RC2  \
     --dockerfile=Containerfile  \
+    --command_json=/tmp/work/command-json.json \
     --app_envs_json=/tmp/work/app-envs-json-sqlite.json \
     --pvc_info={"size":"2Gi","mount_path":"/data"}  \
     --cpu=400m  \
@@ -91,17 +97,23 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
   - create app-envs-json.json:  
     ```
     $ cat cpd-cli-workspace/olm-utils-workspace/work/app-envs-json-postgresql.json  
-
-    # cpd 5.3.0  
-    {"HOST":"0.0.0.0","JWT_SECRET_KEY":"zen-phy-loc-broker-secret-token","BASIC_AUTH_USER":"admin@example.com","BASIC_AUTH_PASSWORD":"changeme","AUTH_REQUIRED":"true","DATABASE_URL":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp","SSL":"true","CERT_FILE":"/etc/certs/tls.crt","KEY_FILE":"/etc/certs/tls.key","MCPGATEWAY_UI_ENABLED":"true","MCPGATEWAY_ADMIN_API_ENABLED":"true"}
-
-    # cpd 5.4.0  
-      [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"DATABASE_URL","value":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}]
+    [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"REQUIRE_JTI","value":"false"},{"name":"DATABASE_URL","value":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}, {"name":"LOCATION_NAME","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdsupport/physicalLocationName']"}}},{"name":"COMPONENT","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['component']"}}},{"name":"APP_RUN_ID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdata_run_id']"}}}]
     ```  
     ***Note:***
       when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
-        `{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+      &emsp;`{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
+      and mount the referenced volume path by adding `--volumes_mounts_json=/tmp/work/volumes-mounts.json`, where:
+      ```
+      $ cat /tmp/work/volumes-mounts.json
+        {"volumes":[{"volume_name":"ca-certs","volume_type":"Secret","volume_source":"ca-certs","mount_path":"/etc/ca-certs"}]}  
+      ```  
       this is temporary workaround, this is needed beyond already adding ca certificate when adding mcp gateway server in mcpgateway admin console
+
+  - create command-json.json file  
+    ```
+    $ cat cpd-cli-workspace/olm-utils-workspace/work/command-json.json  
+      ["sh", "-c", "export APP_ROOT_PATH=/physical_location/$(LOCATION_NAME)/$(COMPONENT)-$(APP_RUN_ID);./docker-entrypoint.sh"]
+    ```  
 
   - run cpd-cli create-dockerfile-application command:  
     ```
@@ -112,6 +124,7 @@ Checkout the [pre-requisites](../README.md#pre-requisites-to-deploy-sample-appli
       --repo_url=https://github.com/IBM/mcp-context-forge.git \
       --repo_branch=v1.0.0-RC2  \
       --dockerfile=Containerfile  \
+      --command_json=/tmp/work/command-json.json \
       --app_envs_json=/tmp/work/app-envs-json-postgresql.json \
       --cpu=400m  \
       --memory=400Mi  \
