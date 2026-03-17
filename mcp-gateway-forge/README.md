@@ -151,10 +151,16 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
 
  #### application available at `https://zen-route/physical_location/default-pl/<app_name-app_run_id>/admin`
 
-mcp-context-forge documentation is available at https://ibm.github.io/mcp-context-forge, for quick start:
+### mcp-context-forge documentation is available at https://ibm.github.io/mcp-context-forge, for quick start:
 1. default username and password is admin@example.com/changeme, you'd need to change default password on first login
 2. use "mcp servers" tab to add mcp servers as mcp gateway service, if mcp servers added as streamablehttp server with oauth, you'd need to click "authorize" link for added mcp server gateway to authorize and fetch tools
 3. use "virtual servers" tab to create a virtual server that you'd like to have available tools included for the server, virtual server is available at `https://zen-route/physical_location/default-pl/<app_name-app_run_id>/servers/<virtual-server-id>/mcp` that mcp client can connect to
 4. use "api tokens" tab to create an api token that is required for mcp client to connect to mcp virtual server, token is bearer token:
   `Authorization: Bearer $API_TOKEN` is needed for mcp client to connect to mcp virtual server
    more permission related token scope can also be set, by default mcp tools are "public" to the token. 
+
+### integrate with zen:
+1. create secret called mcp-gateway-secret:  
+  `oc create secret generic mcp-gatway-secret --from-literal=token='<mcp gateway api token>' -n <zen namespace>`. 
+2. update mcp gateway url:  
+  `oc set env deployment/platform-ai-agent MCP_GATEWAY_URL='<mcp gateway virtual server url>' -n <zen namespace>`. 
