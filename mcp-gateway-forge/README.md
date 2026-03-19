@@ -19,7 +19,7 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
     [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"REQUIRE_JTI","value":"false"},{"name":"DATABASE_URL","value":"sqlite:////data/mcp.db"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"},{"name":"LOCATION_NAME","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdsupport/physicalLocationName']"}}},{"name":"COMPONENT","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['component']"}}},{"name":"APP_RUN_ID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdata_run_id']"}}}]
   ```
   ***Note:***
-    when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
+    when adding mcp gateway server with oauth enabled that uses self-signed certificate, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
     &emsp;`{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
     and mount the referenced volume path by adding `--volumes_mounts_json=/tmp/work/volumes-mounts.json`, where:
     ```
@@ -102,7 +102,7 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
     [{"name":"HOST","value":"0.0.0.0"},{"name": "JWT_SECRET_KEY", "valueFrom": {"secretKeyRef": {"name": "zen-phy-loc-broker-secret", "key": "token"}}},{"name":"BASIC_AUTH_USER","value":"admin@example.com"},{"name":"BASIC_AUTH_PASSWORD","value":"changeme"},{"name":"AUTH_REQUIRED","value":"true"},{"name":"REQUIRE_JTI","value":"false"},{"name":"DATABASE_URL","value":"postgresql+psycopg://postgres:secret@postgresql-mcp-context-forge:5432/mcp"},{"name":"SSL","value":"true"},{"name":"CERT_FILE","value":"/etc/certs/tls.crt"},{"name":"KEY_FILE","value":"/etc/certs/tls.key"},{"name": "MCPGATEWAY_UI_ENABLED","value":"true"},{"name":"MCPGATEWAY_ADMIN_API_ENABLED","value":"true"}, {"name":"LOCATION_NAME","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdsupport/physicalLocationName']"}}},{"name":"COMPONENT","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['component']"}}},{"name":"APP_RUN_ID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.labels['icpdata_run_id']"}}}]
     ```  
     ***Note:***
-      when adding mcp gateway server with oauth enabled, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
+      when adding mcp gateway server with oauth enabled that uses self-signed certificate, need to create a secret volumeMount i.e. /etc/ca-certs/ca.crt and add the following env variable:  
       &emsp;`{"name": "SSL_CERT_FILE", "value": "/etc/ca-certs/ca.crt"}`  
       and mount the referenced volume path by adding `--volumes_mounts_json=/tmp/work/volumes-mounts.json`, where:
       ```
