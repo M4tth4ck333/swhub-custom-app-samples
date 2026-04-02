@@ -53,7 +53,8 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
     --memory_limit=2Gi
   ```  
   ***Note:***
-    --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2
+    - --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2  
+    - the latest main branch would require images from docker.io  
 
 - check that the pod is in running status:
   ```
@@ -137,7 +138,9 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
       --memory_limit=2Gi
     ```  
     ***Note:***
-      --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2
+      - --repo_branch=v1.0.0-RC2 can be used together with --repo_url=https://github.com/IBM/mcp-context-forge.git in cpd 5.4.0, otherwise https://github.com/IBM/mcp-context-forge.git need to be forked/cloned somewhere else with branch created based on tag v1.0.0-RC2
+      - the latest main branch would require images from docker.io  
+
 
   - check that the pod is in running status:
     ```
