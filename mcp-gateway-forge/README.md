@@ -33,7 +33,8 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
   $ cat cpd-cli-workspace/olm-utils-workspace/work/command-json.json  
     ["sh", "-c", "export APP_ROOT_PATH=/physical_location/$(LOCATION_NAME)/$(COMPONENT)-$(APP_RUN_ID);./docker-entrypoint.sh"]
   ```  
-
+- set a default storageClass for this deployment as pvc will be created:
+  i.e. `oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`  
 - run cpd-cli create-dockerfile-application:  
   ```
   cpd-cli manage create-dockerfile-application --instance_ns=zen \
@@ -116,7 +117,9 @@ this instruction requires cpd 5.4.0 or cpd 5.3.1 patch 2 zen and olm-utils.
     $ cat cpd-cli-workspace/olm-utils-workspace/work/command-json.json  
       ["sh", "-c", "export APP_ROOT_PATH=/physical_location/$(LOCATION_NAME)/$(COMPONENT)-$(APP_RUN_ID);./docker-entrypoint.sh"]
     ```  
-
+  - set a default storageClass for this deployment as pvc will be created:
+    i.e. `oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'`
+    
   - run cpd-cli create-dockerfile-application command:  
     ```
     cpd-cli manage create-dockerfile-application --instance_ns=zen \
